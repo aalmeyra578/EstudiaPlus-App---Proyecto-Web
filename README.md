@@ -64,3 +64,10 @@ modal.jsx/
 - CSS
 
 //Guia de Instalacion//
+
+# Instalacion
+- Crear repositorio en github
+- inicializar Git en la terminal de VS code
+- conectarlo con github(link del repositorio)
+- agregar los archivos a este
+- y por último subir el proyecto
