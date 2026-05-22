@@ -1,73 +1,90 @@
-# React + Vite
+# EstudiaPlus — Landing
 
-//Identificación//
+Repositorio: https://github.com/aalmeyra578/EstudiaPlus-App---Proyecto-Web
 
-# EstudiaPlus
+## Identificación
 
-# Integrantes
+- **Proyecto:** EstudiaPlus
+- **Integrantes:**
+  - Agustín Gabriel Almeyra Torres
+  - Kevin Gabriel Ojea
 
-- Agustín Gabriel Almeyra Torres
-- Kevin Gabriel Ojea
-
-//Descripción técnica//
-
-# Proposito del proyecto
+## Propósito del proyecto
 
 La aplicación tiene como fin brindar una herramienta digital que permita a los usuarios gestionar sus tareas y actividades diarias. Se centra en la gestión de tareas, con acciones para crear, editar y eliminar actividades, junto con su organización por estado y fecha. Esta aplicación le permite al usuario tener una visión general de sus actividades en la pantalla principal, así como accesos específicos para tareas, calendario y apuntes.
 
-# Problematica que resuelve
+## Problemática que resuelve
 
 Muchos estudiantes y jóvenes enfrentan dificultades para organizar sus actividades diarias por la cantidad de responsabilidades académicas, personales y sociales. Esta falta de organización puede generar olvidos, retrasos en las entregas, estrés y una disminución en la productividad.
 
-# Perfil del usuario
+## Perfil del usuario
 
 El perfil de usuario destinatario es el de estudiantes de nivel secundario y superior, y personas que necesitan una herramienta para organizar sus actividades diarias de forma sencilla y rápida.
 
-//Arquitectura//
+## Qué contiene
 
-# Arquitectura del proyecto
+- Landing page con Header, Hero, Características, FAQ y Footer.
+- Preview estática de la pantalla de Inicio según el [prototipo en Figma](https://www.figma.com/design/jhOLiGEEmrMNjMXWsdig67/Prototipo-App?node-id=20-184).
+- Design system con tokens CSS y componentes **shadcn/ui** (botones, inputs, textarea, select, checkbox, cards, modal, alertas).
+- Showcase de componentes al final de la página.
 
+## Objetivos
+
+- Presentar el producto con una landing pública coherente con la identidad visual del prototipo.
+- Centralizar colores, tipografías y espaciados en variables reutilizables.
+- Validar el stack React + Vite + TypeScript + Tailwind en una SPA estática.
+
+## Arquitectura
+
+```
 src/
--assests/
--componentes/
--layout/
--FAQ.jsx/
--Features.jsx/
--Footer.jsx/
--Header.jsx/
--Hero.jsx/
--Showcase.jsx/
--ui/
--alerta.jsx/
--button.jsx/
--card.jsx/
-input.jsx/
-modal.jsx/
--App.jsx
--main.jsx
+├── App.tsx
+├── main.tsx
+├── index.css                  # Tokens globales del design system
+├── lib/utils.ts
+└── components/
+    ├── landing/               # Secciones de la landing
+    │   ├── SiteHeader.tsx
+    │   ├── HeroSection.tsx
+    │   ├── FeaturesSection.tsx
+    │   ├── FaqSection.tsx
+    │   ├── ComponentShowcase.tsx
+    │   └── SiteFooter.tsx
+    ├── app/                   # UI del producto (Inicio, sidebar, marca)
+    │   ├── BrandWordmark.tsx
+    │   ├── PrototypeSidebar.tsx
+    │   └── InicioScreenPreview.tsx
+    └── ui/                    # shadcn/ui
+public/
+└── images/inicio-hero.png
+tailwind.config.ts
+components.json
+```
 
-//Objetivos y Tecnologias//
+| Capa | Rol |
+|------|-----|
+| `landing/` | Contenido de la página pública |
+| `app/` | Piezas de la interfaz del producto |
+| `ui/` | Design system genérico |
 
-# Objetivos alcanzados
+## Stack
 
-- Desarrollo de Landing page funcional
-- implementacion de diseño responsive
-- uso de componentes reutilizables
-- aplicaion de estilos modernos con tailwind
+| Tecnología | Uso |
+|------------|-----|
+| React 19 | UI |
+| Vite 8 | Bundler y dev server |
+| TypeScript | Tipado |
+| Tailwind CSS 3 | Estilos |
+| shadcn/ui | Componentes sobre Radix |
+| lucide-react | Iconografía |
 
-# Tecnologias utilizadas
+## Ejecución
 
-- React
-- Vite
-- Tailwind CSS
-- JavaScript
-- CSS
+Requisitos: **Node.js** LTS (v20 o v22) y **npm**.
 
-//Guia de Instalacion//
+```bash
+npm install
+npm run dev
+```
 
-# Instalacion
-- Crear repositorio en github
-- inicializar Git en la terminal de VS code
-- conectarlo con github(link del repositorio)
-- agregar los archivos a este
-- y por último subir el proyecto
+La app queda en `http://localhost:5173`.
