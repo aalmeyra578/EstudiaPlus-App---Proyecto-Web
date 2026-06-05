@@ -44,6 +44,13 @@
     --ep-brand-studia: #7050ff;
     --ep-brand-plus: #6d0363;
     --ep-brand-stroke: #d31cc1;
+    --ep-task-card: #d8ffde;
+    --ep-badge-green: #99ffa9;
+    --ep-badge-orange: #ff9437;
+    --ep-action-green: #3bf09c;
+    --ep-cancel-red: #ff625d;
+    --ep-card-border: #dbdbdb;
+
     --ep-sidebar-gradient: linear-gradient(
       180deg,
       rgba(120, 220, 238, 1) 18%,

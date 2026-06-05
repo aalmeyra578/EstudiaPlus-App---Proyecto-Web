@@ -5,7 +5,7 @@ import { ApuntesPage } from "@/pages/app/ApuntesPage"
 import { CalendarioPage } from "@/pages/app/CalendarioPage"
 import { EditarTareaPage } from "@/pages/app/EditarTareaPage"
 import { InicioPage } from "@/pages/app/InicioPage"
-import { LeerApuntePage } from "@/pages/app/LeerApuntePage"
+import { EditarApuntePage } from "@/pages/app/EditarApuntePage"
 import { NuevaTareaPage } from "@/pages/app/NuevaTareaPage"
 import { NuevoApuntePage } from "@/pages/app/NuevoApuntePage"
 import { TareasPage } from "@/pages/app/TareasPage"
@@ -70,7 +70,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "apuntes/:id",
-        element: <LeerApuntePage />,
+        element: <EditarApuntePage />,
       },
     ],
   },

@@ -50,6 +50,12 @@ export default {
           studia: "var(--ep-brand-studia)",
           plus: "var(--ep-brand-plus)",
           stroke: "var(--ep-brand-stroke)",
+          "task-card": "var(--ep-task-card)",
+          "badge-green": "var(--ep-badge-green)",
+          "badge-orange": "var(--ep-badge-orange)",
+          "action-green": "var(--ep-action-green)",
+          "cancel-red": "var(--ep-cancel-red)",
+          "card-border": "var(--ep-card-border)",
         },
       },
       borderRadius: {

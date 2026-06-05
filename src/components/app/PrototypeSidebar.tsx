@@ -1,9 +1,9 @@
 import type { ReactNode } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { BookOpen, CalendarCheck2, CalendarDays, Home, ListTodo, LogOut, User } from "lucide-react"
+import { BookOpen, CalendarDays, Home, ListTodo, LogOut, User } from "lucide-react"
 
 import { BrandWordmark } from "@/components/app/BrandWordmark"
-import { cn } from "@/lib/utils"
+import { cn, HERO_IMAGE_PATH } from "@/lib/utils"
 
 type NavRowProps = {
   icon: ReactNode
@@ -81,10 +81,18 @@ export function PrototypeSidebar({ className }: { className?: string }) {
     >
       <div className="mb-8 flex items-center gap-3 pl-1">
         <div
-          className="flex h-[53px] w-[84px] shrink-0 items-center justify-center rounded-lg shadow-inner"
+          className="h-[53px] w-[84px] shrink-0 overflow-hidden rounded-lg shadow-inner"
           style={{ background: "var(--ep-logo-tile)" }}
         >
-          <CalendarCheck2 className="size-8 text-ep-studia" aria-hidden />
+          <img
+            src={HERO_IMAGE_PATH}
+            alt="Logo de EstudiaPlus"
+            className="h-full w-full object-cover"
+            width={84}
+            height={53}
+            loading="eager"
+            decoding="async"
+          />
         </div>
         <BrandWordmark size="sidebar" />
       </div>

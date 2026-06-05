@@ -1,22 +1,12 @@
 import { ComponentShowcase } from "@/components/landing/ComponentShowcase"
-import { FaqSection } from "@/components/landing/FaqSection"
-import { FeaturesSection } from "@/components/landing/FeaturesSection"
-import { HeroSection } from "@/components/landing/HeroSection"
-import { SiteFooter } from "@/components/landing/SiteFooter"
-import { SiteHeader } from "@/components/landing/SiteHeader"
 
-/** Public marketing landing (AO2 content). */
+/** Component library showcase page (root route). */
 export function LandingPage() {
   return (
-    <div className="flex min-h-svh flex-col">
-      <SiteHeader />
-      <main className="flex-1">
-        <HeroSection />
-        <FeaturesSection />
-        <FaqSection />
+    <div className="min-h-svh bg-background">
+      <main>
         <ComponentShowcase />
       </main>
-      <SiteFooter />
     </div>
   )
 }

@@ -7,7 +7,7 @@ export function AppLayout() {
   return (
     <div className="flex min-h-svh flex-col lg:flex-row">
       <PrototypeSidebar className="lg:w-[28.2%]" />
-      <div className="flex min-h-[60vh] flex-1 flex-col lg:min-h-svh">
+      <div className="flex min-h-0 flex-1 flex-col">
         <Outlet />
       </div>
     </div>

@@ -56,7 +56,9 @@ src/
     │   └── InicioScreenPreview.tsx
     └── ui/                    # shadcn/ui
 public/
-└── images/inicio-hero.png
+└── images/
+    ├── inicio-hero.png      # UI hero (746×470) — used in landing preview + auth pages
+    └── estudiaplus-logo.png # Master high-res logo (1536×1024) — source for improved branding asset
 tailwind.config.ts
 components.json
 ```

@@ -1,7 +1,8 @@
 import { BrandWordmark } from "@/components/app/BrandWordmark"
 import { PrototypeSidebar } from "@/components/app/PrototypeSidebar"
+import { HERO_IMAGE_PATH } from "@/lib/utils"
 
-const HERO_IMG = "/images/inicio-hero.png"
+const HERO_IMG = HERO_IMAGE_PATH
 
 /** Right panel of the Inicio screen (top bar, hero image, brand). */
 export function InicioMainContent() {
