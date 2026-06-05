@@ -1,5 +1,22 @@
+import { useNavigate } from "react-router-dom"
+
 import { ApunteForm } from "@/components/app/ApunteForm"
+import { createApunte } from "@/services/api"
+import type { ApunteFormData } from "@/types/entities"
 
 export function NuevoApuntePage() {
-  return <ApunteForm title="Nuevo apunte" saveLabel="Guardar apunte" />
+  const navigate = useNavigate()
+
+  async function handleSave(data: ApunteFormData) {
+    await createApunte(data)
+    navigate("/app/apuntes")
+  }
+
+  return (
+    <ApunteForm
+      title="Nuevo apunte"
+      saveLabel="Guardar apunte"
+      onSave={handleSave}
+    />
+  )
 }

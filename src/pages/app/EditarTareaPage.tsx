@@ -1,40 +1,62 @@
-import { useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 
 import { TareaForm } from "@/components/app/TareaForm"
-
-/** Mock data keyed by task id. */
-const MOCK_DATA: Record<string, { titulo: string; descripcion: string; materia: string; fechaDia: string; fechaMes: string; fechaAnio: string; prioridad: "baja" | "media" | "alta" | ""; estado: "pendiente" | "completada" | "" }> = {
-  "1": {
-    titulo: "Actividades de la unidad 1",
-    descripcion: "",
-    materia: "Programacion",
-    fechaDia: "10",
-    fechaMes: "Abril",
-    fechaAnio: "2026",
-    prioridad: "media",
-    estado: "pendiente",
-  },
-  "2": {
-    titulo: "Trabajo Practico",
-    descripcion: "",
-    materia: "Seguridad Informatica",
-    fechaDia: "20",
-    fechaMes: "Abril",
-    fechaAnio: "2026",
-    prioridad: "alta",
-    estado: "pendiente",
-  },
-}
+import { getTarea, updateTarea } from "@/services/api"
+import type { Tarea, TareaFormData } from "@/types/entities"
 
 export function EditarTareaPage() {
   const { id } = useParams<{ id: string }>()
-  const data = id ? MOCK_DATA[id] : undefined
+  const navigate = useNavigate()
+  const [tarea, setTarea] = useState<Tarea | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!id) {
+      setError("ID de tarea inválido.")
+      setLoading(false)
+      return
+    }
+
+    getTarea(Number(id))
+      .then(setTarea)
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : "No se pudo cargar la tarea.")
+      })
+      .finally(() => setLoading(false))
+  }, [id])
+
+  async function handleSave(data: TareaFormData) {
+    if (!id) return
+    await updateTarea(Number(id), data)
+    navigate("/app/tareas")
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-full items-center justify-center bg-white px-6">
+        <p className="font-sans text-base text-muted-foreground">Cargando tarea...</p>
+      </div>
+    )
+  }
+
+  if (error || !tarea) {
+    return (
+      <div className="flex min-h-full items-center justify-center bg-white px-6">
+        <p className="font-sans text-base text-red-600" role="alert">
+          {error ?? "Tarea no encontrada."}
+        </p>
+      </div>
+    )
+  }
 
   return (
     <TareaForm
       title="Editar tarea"
       saveLabel="Guardar"
-      defaultValues={data}
+      defaultValues={tarea}
+      onSave={handleSave}
     />
   )
 }

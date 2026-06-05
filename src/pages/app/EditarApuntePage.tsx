@@ -1,37 +1,64 @@
-import { useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 
 import { ApunteForm } from "@/components/app/ApunteForm"
-
-const MOCK_APUNTES: Record<string, { titulo: string; contenido: string }> = {
-  "1": {
-    titulo: "Unidad 3 — Resumen",
-    contenido:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-  },
-  "2": {
-    titulo: "Resumen Unidad 4",
-    contenido: "Contenido del resumen de la unidad 4...",
-  },
-  "3": {
-    titulo: "Apuntes clases",
-    contenido: "Apuntes tomados durante las clases...",
-  },
-  "4": {
-    titulo: "Codigo clase 1",
-    contenido: "// Código de la clase 1\nconsole.log('Hola mundo');",
-  },
-}
+import { getApunte, updateApunte } from "@/services/api"
+import type { Apunte, ApunteFormData } from "@/types/entities"
 
 export function EditarApuntePage() {
   const { id } = useParams<{ id: string }>()
-  const data = id ? MOCK_APUNTES[id] : undefined
+  const navigate = useNavigate()
+  const [apunte, setApunte] = useState<Apunte | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!id) {
+      setError("ID de apunte inválido.")
+      setLoading(false)
+      return
+    }
+
+    getApunte(Number(id))
+      .then(setApunte)
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : "No se pudo cargar el apunte.")
+      })
+      .finally(() => setLoading(false))
+  }, [id])
+
+  async function handleSave(data: ApunteFormData) {
+    if (!id) return
+    await updateApunte(Number(id), data)
+    navigate("/app/apuntes")
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-full items-center justify-center bg-white px-6">
+        <p className="font-sans text-base text-muted-foreground">Cargando apunte...</p>
+      </div>
+    )
+  }
+
+  if (error || !apunte) {
+    return (
+      <div className="flex min-h-full items-center justify-center bg-white px-6">
+        <p className="font-sans text-base text-red-600" role="alert">
+          {error ?? "Apunte no encontrado."}
+        </p>
+      </div>
+    )
+  }
 
   return (
     <ApunteForm
       title="Editar apunte"
       saveLabel="Guardar apunte"
-      defaultTitulo={data?.titulo ?? ""}
-      defaultContenido={data?.contenido ?? ""}
+      defaultTitulo={apunte.titulo}
+      defaultContenido={apunte.contenido}
+      defaultMateria={apunte.materia}
+      onSave={handleSave}
     />
   )
 }

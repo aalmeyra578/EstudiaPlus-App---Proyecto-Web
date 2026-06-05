@@ -4,76 +4,72 @@ import { useNavigate } from "react-router-dom"
 import * as Select from "@radix-ui/react-select"
 import { Check, ChevronDown } from "lucide-react"
 
-export type TareaFormData = {
-  titulo: string
-  descripcion: string
-  materia: string
-  fechaDia: string
-  fechaMes: string
-  fechaAnio: string
-  prioridad: "baja" | "media" | "alta" | ""
-  estado: "pendiente" | "completada" | ""
-}
-
-export const EMPTY_TAREA: TareaFormData = {
-  titulo: "",
-  descripcion: "",
-  materia: "",
-  fechaDia: "",
-  fechaMes: "",
-  fechaAnio: "",
-  prioridad: "",
-  estado: "",
-}
-
-const MATERIAS = ["Programacion", "Seguridad Informatica", "Redes", "Base de Datos", "Diseño Web"]
-
-const MESES = [
-  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
-]
-
-const ANIOS = Array.from({ length: 16 }, (_, i) => (2020 + i).toString())
-
-function getDaysInMonth(mes: string, anioStr: string): number {
-  const idx = MESES.indexOf(mes)
-  if (idx < 0) return 31
-  const y = parseInt(anioStr, 10) || new Date().getFullYear()
-  // day 0 of next month gives the last day of the target month (handles leap years)
-  return new Date(y, idx + 1, 0).getDate()
-}
+import { buildFechaLimite, getDaysInMonth, MESES, parseFechaLimite } from "@/lib/date"
+import { MATERIAS } from "@/lib/materia"
+import type { TareaFormData } from "@/types/entities"
 
 type Props = {
   title: string
   saveLabel: string
   defaultValues?: Partial<TareaFormData>
+  onSave: (data: TareaFormData) => Promise<void>
 }
 
-export function TareaForm({ title, saveLabel, defaultValues }: Props) {
+const ANIOS = Array.from({ length: 16 }, (_, i) => (2020 + i).toString())
+
+export function TareaForm({ title, saveLabel, defaultValues, onSave }: Props) {
   const navigate = useNavigate()
-  const vals: TareaFormData = { ...EMPTY_TAREA, ...defaultValues }
+  const fechaInicial = parseFechaLimite(defaultValues?.fechaLimite ?? null)
 
-  // Controlled date fields so that day options can react to month/year (and clamp invalid days)
-  const [fechaDia, setFechaDia] = useState(vals.fechaDia || "")
-  const [fechaMes, setFechaMes] = useState(vals.fechaMes || "")
-  const [fechaAnio, setFechaAnio] = useState(vals.fechaAnio || "")
+  const [titulo, setTitulo] = useState(defaultValues?.titulo ?? "")
+  const [descripcion, setDescripcion] = useState(defaultValues?.descripcion ?? "")
+  const [materia, setMateria] = useState(defaultValues?.materia ?? "")
+  const [fechaDia, setFechaDia] = useState(fechaInicial.dia)
+  const [fechaMes, setFechaMes] = useState(fechaInicial.mes)
+  const [fechaAnio, setFechaAnio] = useState(fechaInicial.anio)
+  const [prioridad, setPrioridad] = useState<TareaFormData["prioridad"]>(
+    defaultValues?.prioridad ?? "media"
+  )
+  const [estado, setEstado] = useState<TareaFormData["estado"]>(
+    defaultValues?.estado ?? "pendiente"
+  )
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  // If month or year changes and the current day exceeds the new month's length, clamp it.
   useEffect(() => {
     if (!fechaMes || !fechaAnio || !fechaDia) return
     const max = getDaysInMonth(fechaMes, fechaAnio)
     const d = parseInt(fechaDia, 10)
-    if (!isNaN(d) && d > max) {
+    if (!Number.isNaN(d) && d > max) {
       setFechaDia(max.toString())
     }
-  }, [fechaMes, fechaAnio])
+  }, [fechaMes, fechaAnio, fechaDia])
 
   const diasDisponibles = fechaMes && fechaAnio ? getDaysInMonth(fechaMes, fechaAnio) : 31
   const DIAS = Array.from({ length: diasDisponibles }, (_, i) => (i + 1).toString())
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+    try {
+      await onSave({
+        titulo,
+        descripcion,
+        materia,
+        fechaLimite: buildFechaLimite(fechaDia, fechaMes, fechaAnio),
+        prioridad,
+        estado,
+      })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo guardar la tarea.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="flex min-h-full flex-col bg-white">
-      {/* Top bar */}
       <div
         className="flex min-h-[122px] items-center border-b border-black/5 px-6 sm:px-10"
         style={{ background: "var(--ep-topbar)" }}
@@ -83,8 +79,16 @@ export function TareaForm({ title, saveLabel, defaultValues }: Props) {
         </h1>
       </div>
 
-      <div className="flex flex-1 flex-col gap-6 px-6 py-6 sm:px-10">
-        {/* Título */}
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-1 flex-col gap-6 px-6 py-6 sm:px-10"
+      >
+        {error && (
+          <p className="font-sans text-base text-red-600" role="alert">
+            {error}
+          </p>
+        )}
+
         <div className="flex flex-col gap-1">
           <label className="font-sans text-2xl" htmlFor="task-title">
             Título de la tarea
@@ -92,30 +96,30 @@ export function TareaForm({ title, saveLabel, defaultValues }: Props) {
           <input
             id="task-title"
             type="text"
-            defaultValue={vals.titulo}
+            value={titulo}
+            onChange={(e) => setTitulo(e.target.value)}
+            required
             className="h-[70px] w-full rounded-field border border-ep-card-border bg-white px-5 font-mono text-[32px] tracking-tight text-foreground focus:outline-none focus:ring-2 focus:ring-ep-cta"
           />
         </div>
 
-        {/* Descripción */}
         <div className="flex flex-col gap-1">
           <label className="font-sans text-2xl" htmlFor="task-desc">
             Descripción
           </label>
           <textarea
             id="task-desc"
-            defaultValue={vals.descripcion}
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
             rows={4}
             className="w-full rounded-field border border-ep-card-border bg-white px-5 py-4 font-sans text-2xl font-normal text-foreground focus:outline-none focus:ring-2 focus:ring-ep-cta"
           />
         </div>
 
-        {/* Materia + Fecha */}
         <div className="flex flex-wrap gap-8">
-          {/* Materia select */}
           <div className="flex flex-col gap-1">
             <label className="font-sans text-2xl">Materia</label>
-            <Select.Root defaultValue={vals.materia || undefined}>
+            <Select.Root value={materia || undefined} onValueChange={setMateria}>
               <Select.Trigger
                 className="flex h-10 min-w-[339px] items-center justify-between rounded-lg border border-ep-card-border bg-white px-4 font-sans text-xl text-foreground focus:outline-none focus:ring-2 focus:ring-ep-cta"
                 aria-label="Seleccionar materia"
@@ -147,11 +151,9 @@ export function TareaForm({ title, saveLabel, defaultValues }: Props) {
             </Select.Root>
           </div>
 
-          {/* Fecha límite - three linked selects (day options depend on month+year) */}
           <div className="flex flex-col gap-1">
             <label className="font-sans text-2xl">Fecha límite</label>
             <div className="flex items-center gap-2">
-              {/* Día (dynamic options 1..N depending on selected month/year) */}
               <Select.Root value={fechaDia || undefined} onValueChange={setFechaDia}>
                 <Select.Trigger
                   className="flex h-10 w-[70px] items-center justify-between rounded-lg border border-ep-card-border bg-white px-2 font-sans text-xl text-foreground focus:outline-none focus:ring-2 focus:ring-ep-cta"
@@ -183,7 +185,6 @@ export function TareaForm({ title, saveLabel, defaultValues }: Props) {
                 </Select.Portal>
               </Select.Root>
 
-              {/* Mes (names, controlled) */}
               <Select.Root value={fechaMes || undefined} onValueChange={setFechaMes}>
                 <Select.Trigger
                   className="flex h-10 w-[150px] items-center justify-between rounded-lg border border-ep-card-border bg-white px-4 font-sans text-xl text-foreground focus:outline-none focus:ring-2 focus:ring-ep-cta"
@@ -215,7 +216,6 @@ export function TareaForm({ title, saveLabel, defaultValues }: Props) {
                 </Select.Portal>
               </Select.Root>
 
-              {/* Año (controlled select over a reasonable range) */}
               <Select.Root value={fechaAnio || undefined} onValueChange={setFechaAnio}>
                 <Select.Trigger
                   className="flex h-10 w-[90px] items-center justify-between rounded-lg border border-ep-card-border bg-white px-3 font-sans text-xl text-foreground focus:outline-none focus:ring-2 focus:ring-ep-cta"
@@ -250,71 +250,66 @@ export function TareaForm({ title, saveLabel, defaultValues }: Props) {
           </div>
         </div>
 
-        {/* Prioridad - single choice (radio) */}
         <div className="flex flex-wrap items-center gap-6">
           <span className="font-sans text-2xl">Prioridad:</span>
-          {(["Baja", "Media", "Alta"] as const).map((p) => {
-            const val = p.toLowerCase()
-            return (
-              <label key={p} className="flex cursor-pointer items-center gap-2 font-sans text-xl">
-                <input
-                  type="radio"
-                  name="prioridad"
-                  value={val}
-                  defaultChecked={vals.prioridad === val}
-                  className="peer sr-only"
-                />
-                <span className="flex size-4 items-center justify-center rounded border-2 border-foreground bg-[#2c2c2c] peer-checked:[&>svg]:opacity-100">
-                  <Check className="size-3 text-white opacity-0" />
-                </span>
-                {p}
-              </label>
-            )
-          })}
+          {(["baja", "media", "alta"] as const).map((p) => (
+            <label key={p} className="flex cursor-pointer items-center gap-2 font-sans text-xl capitalize">
+              <input
+                type="radio"
+                name="prioridad"
+                value={p}
+                checked={prioridad === p}
+                onChange={() => setPrioridad(p)}
+                className="peer sr-only"
+              />
+              <span className="flex size-4 items-center justify-center rounded border-2 border-foreground bg-[#2c2c2c] peer-checked:[&>svg]:opacity-100">
+                <Check className="size-3 text-white opacity-0" />
+              </span>
+              {p.charAt(0).toUpperCase() + p.slice(1)}
+            </label>
+          ))}
         </div>
 
-        {/* Estado - single choice (radio) */}
         <div className="flex flex-wrap items-center gap-6">
           <span className="font-sans text-2xl">Estado:</span>
-          {(["Pendiente", "Completada"] as const).map((e) => {
-            const val = e.toLowerCase()
-            return (
-              <label key={e} className="flex cursor-pointer items-center gap-2 font-sans text-xl">
-                <input
-                  type="radio"
-                  name="estado"
-                  value={val}
-                  defaultChecked={vals.estado === val}
-                  className="peer sr-only"
-                />
-                <span className="flex size-4 items-center justify-center rounded border-2 border-foreground bg-[#2c2c2c] peer-checked:[&>svg]:opacity-100">
-                  <Check className="size-3 text-white opacity-0" />
-                </span>
-                {e}
-              </label>
-            )
-          })}
+          {(["pendiente", "completada"] as const).map((e) => (
+            <label key={e} className="flex cursor-pointer items-center gap-2 font-sans text-xl capitalize">
+              <input
+                type="radio"
+                name="estado"
+                value={e}
+                checked={estado === e}
+                onChange={() => setEstado(e)}
+                className="peer sr-only"
+              />
+              <span className="flex size-4 items-center justify-center rounded border-2 border-foreground bg-[#2c2c2c] peer-checked:[&>svg]:opacity-100">
+                <Check className="size-3 text-white opacity-0" />
+              </span>
+              {e.charAt(0).toUpperCase() + e.slice(1)}
+            </label>
+          ))}
         </div>
 
-        {/* Action buttons */}
         <div className="mt-4 flex flex-wrap gap-4">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="h-[68px] min-w-[212px] rounded-[20px] font-mono text-2xl tracking-tight transition-opacity hover:opacity-90"
+            disabled={loading}
+            className="h-[68px] min-w-[212px] rounded-[20px] font-mono text-2xl tracking-tight transition-opacity hover:opacity-90 disabled:opacity-50"
             style={{ background: "var(--ep-cancel-red)" }}
           >
             Cancelar
           </button>
           <button
-            type="button"
-            className="h-[68px] min-w-[212px] rounded-[20px] font-mono text-2xl tracking-tight transition-opacity hover:opacity-90"
+            type="submit"
+            disabled={loading}
+            className="h-[68px] min-w-[212px] rounded-[20px] font-mono text-2xl tracking-tight transition-opacity hover:opacity-90 disabled:opacity-50"
             style={{ background: "var(--ep-action-green)" }}
           >
-            {saveLabel}
+            {loading ? "Guardando..." : saveLabel}
           </button>
         </div>
-      </div>
+      </form>
     </div>
   )
 }

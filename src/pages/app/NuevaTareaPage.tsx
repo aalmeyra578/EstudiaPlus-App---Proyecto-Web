@@ -1,5 +1,22 @@
+import { useNavigate } from "react-router-dom"
+
 import { TareaForm } from "@/components/app/TareaForm"
+import { createTarea } from "@/services/api"
+import type { TareaFormData } from "@/types/entities"
 
 export function NuevaTareaPage() {
-  return <TareaForm title="Nueva tarea" saveLabel="Guardar tarea" />
+  const navigate = useNavigate()
+
+  async function handleSave(data: TareaFormData) {
+    await createTarea(data)
+    navigate("/app/tareas")
+  }
+
+  return (
+    <TareaForm
+      title="Nueva tarea"
+      saveLabel="Guardar tarea"
+      onSave={handleSave}
+    />
+  )
 }
