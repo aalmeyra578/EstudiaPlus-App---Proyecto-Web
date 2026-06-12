@@ -1,13 +1,11 @@
 import { LayoutDashboard } from "lucide-react"
 
 import { BrandWordmark } from "@/components/app/BrandWordmark"
-import { Button } from "@/components/ui/button"
 
 const nav = [
   { label: "Inicio", href: "#hero" },
   { label: "Características", href: "#features" },
   { label: "FAQ", href: "#faq" },
-  { label: "Componentes", href: "#showcase" },
 ]
 
 export function SiteHeader() {
@@ -32,16 +30,13 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="flex shrink-0 items-center gap-2">
-          <Button
-            size="sm"
-            className="rounded-pill bg-[var(--ep-cta)] font-mono text-black hover:bg-[var(--ep-cta)]"
-            asChild
+          <a
+            href="#hero"
+            className="inline-flex h-8 items-center gap-2 rounded-pill bg-[var(--ep-cta)] px-3 font-mono text-sm text-black transition-opacity hover:opacity-90"
           >
-            <a href="#hero" className="inline-flex items-center gap-2">
-              <LayoutDashboard className="size-4 shrink-0" aria-hidden strokeWidth={2} />
-              Vista inicio
-            </a>
-          </Button>
+            <LayoutDashboard className="size-4 shrink-0" aria-hidden strokeWidth={2} />
+            Vista inicio
+          </a>
         </div>
       </div>
     </header>

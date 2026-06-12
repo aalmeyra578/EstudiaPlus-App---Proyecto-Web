@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import * as Select from "@radix-ui/react-select"
@@ -36,16 +36,12 @@ export function TareaForm({ title, saveLabel, defaultValues, onSave }: Props) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (!fechaMes || !fechaAnio || !fechaDia) return
-    const max = getDaysInMonth(fechaMes, fechaAnio)
-    const d = parseInt(fechaDia, 10)
-    if (!Number.isNaN(d) && d > max) {
-      setFechaDia(max.toString())
-    }
-  }, [fechaMes, fechaAnio, fechaDia])
-
   const diasDisponibles = fechaMes && fechaAnio ? getDaysInMonth(fechaMes, fechaAnio) : 31
+  const diaNumerico = parseInt(fechaDia, 10)
+  const fechaDiaNormalizada =
+    !Number.isNaN(diaNumerico) && diaNumerico > diasDisponibles
+      ? diasDisponibles.toString()
+      : fechaDia
   const DIAS = Array.from({ length: diasDisponibles }, (_, i) => (i + 1).toString())
 
   async function handleSubmit(e: React.FormEvent) {
@@ -57,7 +53,7 @@ export function TareaForm({ title, saveLabel, defaultValues, onSave }: Props) {
         titulo,
         descripcion,
         materia,
-        fechaLimite: buildFechaLimite(fechaDia, fechaMes, fechaAnio),
+        fechaLimite: buildFechaLimite(fechaDiaNormalizada, fechaMes, fechaAnio),
         prioridad,
         estado,
       })
@@ -154,7 +150,7 @@ export function TareaForm({ title, saveLabel, defaultValues, onSave }: Props) {
           <div className="flex flex-col gap-1">
             <label className="font-sans text-2xl">Fecha límite</label>
             <div className="flex items-center gap-2">
-              <Select.Root value={fechaDia || undefined} onValueChange={setFechaDia}>
+              <Select.Root value={fechaDiaNormalizada || undefined} onValueChange={setFechaDia}>
                 <Select.Trigger
                   className="flex h-10 w-[70px] items-center justify-between rounded-lg border border-ep-card-border bg-white px-2 font-sans text-xl text-foreground focus:outline-none focus:ring-2 focus:ring-ep-cta"
                   aria-label="Seleccionar día"
