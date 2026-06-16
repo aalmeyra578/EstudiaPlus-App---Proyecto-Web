@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
+import { StatusMessage } from "@/components/app/StatusMessage"
+
 const WEEKDAYS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]
 
 const MONTH_NAMES = [
@@ -184,15 +186,17 @@ export function CalendarioPage() {
               : "Seleccioná un día"}
           </h2>
 
-          {selectedDay == null && (
-            <p className="font-sans text-sm text-foreground/50">
-              Hacé clic en un día del calendario para ver las tareas asignadas.
-            </p>
-          )}
+          <StatusMessage
+            isEmpty={selectedDay == null}
+            emptyText="Hacé clic en un día del calendario para ver las tareas asignadas."
+            size="sm"
+          />
 
-          {selectedDay != null && tareasDelDia.length === 0 && (
-            <p className="font-sans text-sm text-foreground/50">Sin tareas para este día.</p>
-          )}
+          <StatusMessage
+            isEmpty={selectedDay != null && tareasDelDia.length === 0}
+            emptyText="Sin tareas para este día."
+            size="sm"
+          />
 
           {tareasDelDia.map((tarea) => (
             <div

@@ -1,5 +1,10 @@
 export type MateriaColor = "green" | "orange"
 
+export const BADGE_CLASSES: Record<MateriaColor, string> = {
+  green: "bg-ep-badge-green border-ep-card-border",
+  orange: "bg-ep-badge-orange border-ep-card-border",
+}
+
 const MATERIA_COLORS: Record<string, MateriaColor> = {
   Programacion: "green",
   "Seguridad Informatica": "orange",

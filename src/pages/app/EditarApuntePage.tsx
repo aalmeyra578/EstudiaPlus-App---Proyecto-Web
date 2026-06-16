@@ -2,53 +2,41 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
 import { ApunteForm } from "@/components/app/ApunteForm"
+import { StatusMessage } from "@/components/app/StatusMessage"
 import { getApunte, updateApunte } from "@/services/api"
 import type { Apunte, ApunteFormData } from "@/types/entities"
 
 export function EditarApuntePage() {
   const { id } = useParams<{ id: string }>()
+  const parsedId = Number(id)
+  const hasValidId = Number.isFinite(parsedId)
   const navigate = useNavigate()
   const [apunte, setApunte] = useState<Apunte | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!id) {
-      setError("ID de apunte inválido.")
-      setLoading(false)
-      return
-    }
+    if (!hasValidId) return
 
-    getApunte(Number(id))
+    getApunte(parsedId)
       .then(setApunte)
       .catch((err) => {
         setError(err instanceof Error ? err.message : "No se pudo cargar el apunte.")
       })
       .finally(() => setLoading(false))
-  }, [id])
+  }, [hasValidId, parsedId])
 
   async function handleSave(data: ApunteFormData) {
-    if (!id) return
-    await updateApunte(Number(id), data)
+    await updateApunte(parsedId, data)
     navigate("/app/apuntes")
   }
 
-  if (loading) {
-    return (
-      <div className="flex min-h-full items-center justify-center bg-white px-6">
-        <p className="font-sans text-base text-muted-foreground">Cargando apunte...</p>
-      </div>
-    )
-  }
+  if (!hasValidId) return <StatusMessage error="ID de apunte inválido." fullPage />
+
+  if (loading) return <StatusMessage loading loadingText="Cargando apunte..." fullPage />
 
   if (error || !apunte) {
-    return (
-      <div className="flex min-h-full items-center justify-center bg-white px-6">
-        <p className="font-sans text-base text-red-600" role="alert">
-          {error ?? "Apunte no encontrado."}
-        </p>
-      </div>
-    )
+    return <StatusMessage error={error ?? "Apunte no encontrado."} fullPage />
   }
 
   return (

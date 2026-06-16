@@ -1,4 +1,4 @@
-# EstudiaPlus — Landing
+# EstudiaPlus
 
 Repositorio: https://github.com/aalmeyra578/EstudiaPlus-App---Proyecto-Web
 
@@ -9,84 +9,129 @@ Repositorio: https://github.com/aalmeyra578/EstudiaPlus-App---Proyecto-Web
   - Agustín Gabriel Almeyra Torres
   - Kevin Gabriel Ojea
 
-## Propósito del proyecto
+## Descripción
 
-La aplicación tiene como fin brindar una herramienta digital que permita a los usuarios gestionar sus tareas y actividades diarias. Se centra en la gestión de tareas, con acciones para crear, editar y eliminar actividades, junto con su organización por estado y fecha. Esta aplicación le permite al usuario tener una visión general de sus actividades en la pantalla principal, así como accesos específicos para tareas, calendario y apuntes.
+EstudiaPlus es una SPA para organización académica con tres áreas:
 
-## Problemática que resuelve
+- **Landing pública** (`/`)
+- **Flujo de autenticación** (`/login`, `/registro`, `/recuperar-contrasena`)
+- **Aplicación principal** (`/app`) con gestión de tareas, calendario y apuntes
 
-Muchos estudiantes y jóvenes enfrentan dificultades para organizar sus actividades diarias por la cantidad de responsabilidades académicas, personales y sociales. Esta falta de organización puede generar olvidos, retrasos en las entregas, estrés y una disminución en la productividad.
+## Funcionalidades
 
-## Perfil del usuario
+- Gestión de tareas: crear, editar, eliminar y marcar como completadas.
+- Gestión de apuntes: crear, editar y eliminar.
+- Calendario con visualización de tareas por día.
+- Navegación lateral persistente dentro del área de aplicación.
+- Estados de UI unificados para carga, vacío y error.
 
-El perfil de usuario destinatario es el de estudiantes de nivel secundario y superior, y personas que necesitan una herramienta para organizar sus actividades diarias de forma sencilla y rápida.
+## Rutas principales
 
-## Qué contiene
+### Públicas
 
-- Landing page con Header, Hero, Características, FAQ y Footer.
-- Preview estática de la pantalla de Inicio según el [prototipo en Figma](https://www.figma.com/design/jhOLiGEEmrMNjMXWsdig67/Prototipo-App?node-id=20-184).
-- Design system con tokens CSS y componentes **shadcn/ui** (botones, inputs, textarea, select, checkbox, cards, modal, alertas).
-- Showcase de componentes al final de la página.
+- `/`
+- `/login`
+- `/registro`
+- `/recuperar-contrasena`
 
-## Objetivos
+### App
 
-- Presentar el producto con una landing pública coherente con la identidad visual del prototipo.
-- Centralizar colores, tipografías y espaciados en variables reutilizables.
-- Validar el stack React + Vite + TypeScript + Tailwind en una SPA estática.
+- `/app/inicio`
+- `/app/tareas`
+- `/app/tareas/nueva`
+- `/app/tareas/:id/editar`
+- `/app/calendario`
+- `/app/apuntes`
+- `/app/apuntes/nuevo`
+- `/app/apuntes/:id`
 
-## Arquitectura
+## Arquitectura actual
 
 ```
 src/
-├── App.tsx
-├── main.tsx
-├── index.css                  # Tokens globales del design system
-├── lib/utils.ts
-└── components/
-    ├── landing/               # Secciones de la landing
-    │   ├── SiteHeader.tsx
-    │   ├── HeroSection.tsx
-    │   ├── FeaturesSection.tsx
-    │   ├── FaqSection.tsx
-    │   ├── ComponentShowcase.tsx
-    │   └── SiteFooter.tsx
-    ├── app/                   # UI del producto (Inicio, sidebar, marca)
-    │   ├── BrandWordmark.tsx
-    │   ├── PrototypeSidebar.tsx
-    │   └── InicioScreenPreview.tsx
-    └── ui/                    # shadcn/ui
-public/
-└── images/
-    ├── inicio-hero.png      # UI hero (746×470) — used in landing preview + auth pages
-    └── estudiaplus-logo.png # Master high-res logo (1536×1024) — source for improved branding asset
-tailwind.config.ts
-components.json
+├── components/
+│   ├── app/
+│   │   ├── AppButton.tsx
+│   │   ├── ItemActionButtons.tsx
+│   │   ├── ListItemCard.tsx
+│   │   ├── ListSection.tsx
+│   │   ├── MateriaBadge.tsx
+│   │   ├── PageSearchTopbar.tsx
+│   │   ├── SectionContainer.tsx
+│   │   ├── StatusMessage.tsx
+│   │   ├── TaskCompletionControl.tsx
+│   │   ├── TaskFilterTabs.tsx
+│   │   ├── ApunteForm.tsx
+│   │   ├── TareaForm.tsx
+│   │   ├── BrandWordmark.tsx
+│   │   ├── PrototypeSidebar.tsx
+│   │   └── InicioScreenPreview.tsx
+│   ├── auth/
+│   │   ├── AuthFormLayout.tsx
+│   │   └── AuthInput.tsx
+│   └── landing/
+│       ├── SiteHeader.tsx
+│       ├── HeroSection.tsx
+│       ├── FeaturesSection.tsx
+│       ├── FaqSection.tsx
+│       └── SiteFooter.tsx
+├── layouts/
+│   └── AppLayout.tsx
+├── pages/
+│   ├── app/
+│   ├── auth/
+│   ├── LandingPage.tsx
+│   └── NotFoundPage.tsx
+├── router/
+│   └── index.tsx
+├── services/
+│   └── api.ts
+├── lib/
+│   ├── date.ts
+│   ├── materia.ts
+│   └── utils.ts
+└── types/
+    └── entities.ts
 ```
 
-| Capa | Rol |
-|------|-----|
-| `landing/` | Contenido de la página pública |
-| `app/` | Piezas de la interfaz del producto |
-| `ui/` | Design system genérico |
+## API
+
+La app consume una API REST con base configurable:
+
+- `VITE_API_URL` (default: `http://localhost:3000`)
+
+Endpoints utilizados:
+
+- `GET/POST /tareas`
+- `GET/PUT/DELETE /tareas/:id`
+- `GET/POST /apuntes`
+- `GET/PUT/DELETE /apuntes/:id`
 
 ## Stack
 
-| Tecnología | Uso |
-|------------|-----|
-| React 19 | UI |
-| Vite 8 | Bundler y dev server |
-| TypeScript | Tipado |
-| Tailwind CSS 3 | Estilos |
-| shadcn/ui | Componentes sobre Radix |
-| lucide-react | Iconografía |
+- React 19
+- Vite 8
+- TypeScript
+- Tailwind CSS 3
+- Radix UI (`@radix-ui/react-checkbox`, `@radix-ui/react-select`)
+- Lucide React
 
-## Ejecución
+## Scripts
 
-Requisitos: **Node.js** LTS (v20 o v22) y **npm**.
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run preview
+```
+
+## Ejecución local
+
+Requisitos: Node.js LTS (v20 o v22) y npm.
 
 ```bash
 npm install
 npm run dev
 ```
 
-La app queda en `http://localhost:5173`.
+Aplicación disponible en `http://localhost:5173`.

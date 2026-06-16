@@ -2,53 +2,41 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
 import { TareaForm } from "@/components/app/TareaForm"
+import { StatusMessage } from "@/components/app/StatusMessage"
 import { getTarea, updateTarea } from "@/services/api"
 import type { Tarea, TareaFormData } from "@/types/entities"
 
 export function EditarTareaPage() {
   const { id } = useParams<{ id: string }>()
+  const parsedId = Number(id)
+  const hasValidId = Number.isFinite(parsedId)
   const navigate = useNavigate()
   const [tarea, setTarea] = useState<Tarea | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!id) {
-      setError("ID de tarea inválido.")
-      setLoading(false)
-      return
-    }
+    if (!hasValidId) return
 
-    getTarea(Number(id))
+    getTarea(parsedId)
       .then(setTarea)
       .catch((err) => {
         setError(err instanceof Error ? err.message : "No se pudo cargar la tarea.")
       })
       .finally(() => setLoading(false))
-  }, [id])
+  }, [hasValidId, parsedId])
 
   async function handleSave(data: TareaFormData) {
-    if (!id) return
-    await updateTarea(Number(id), data)
+    await updateTarea(parsedId, data)
     navigate("/app/tareas")
   }
 
-  if (loading) {
-    return (
-      <div className="flex min-h-full items-center justify-center bg-white px-6">
-        <p className="font-sans text-base text-muted-foreground">Cargando tarea...</p>
-      </div>
-    )
-  }
+  if (!hasValidId) return <StatusMessage error="ID de tarea inválido." fullPage />
+
+  if (loading) return <StatusMessage loading loadingText="Cargando tarea..." fullPage />
 
   if (error || !tarea) {
-    return (
-      <div className="flex min-h-full items-center justify-center bg-white px-6">
-        <p className="font-sans text-base text-red-600" role="alert">
-          {error ?? "Tarea no encontrada."}
-        </p>
-      </div>
-    )
+    return <StatusMessage error={error ?? "Tarea no encontrada."} fullPage />
   }
 
   return (

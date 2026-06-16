@@ -1,53 +1,140 @@
-import type { Apunte, ApunteFormData, Tarea, TareaFormData } from "@/types/entities"
+import { supabase } from "@/lib/supabase";
+import type {
+  Apunte,
+  ApunteFormData,
+  Tarea,
+  TareaFormData,
+} from "@/types/entities";
 
-const BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3000"
+// TAREAS
+export const getTareas = async (): Promise<Tarea[]> => {
+  const { data, error } = await supabase
+    .from("tareas")
+    .select("*")
+    .order("id");
 
-class ApiError extends Error {
-  status: number
+  if (error) throw error;
 
-  constructor(message: string, status: number) {
-    super(message)
-    this.name = "ApiError"
-    this.status = status
-  }
-}
+  return data as Tarea[];
+};
 
-async function apiFetch<T>(
-  method: string,
-  path: string,
-  body?: unknown
-): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    method,
-    headers: body !== undefined ? { "Content-Type": "application/json" } : undefined,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  })
+export const getTarea = async (id: number): Promise<Tarea> => {
+  const { data, error } = await supabase
+    .from("tareas")
+    .select("*")
+    .eq("id", id)
+    .single();
 
-  if (!res.ok) {
-    const text = await res.text().catch(() => "")
-    throw new ApiError(text || `Request failed with status ${res.status}`, res.status)
-  }
+  if (error) throw error;
 
-  if (res.status === 204) return undefined as T
-  return res.json() as Promise<T>
-}
+  return data as Tarea;
+};
 
-// Tareas
-export const getTareas = (): Promise<Tarea[]> => apiFetch("GET", "/tareas")
-export const getTarea = (id: number): Promise<Tarea> => apiFetch("GET", `/tareas/${id}`)
-export const createTarea = (data: TareaFormData): Promise<Tarea> =>
-  apiFetch("POST", "/tareas", data)
-export const updateTarea = (id: number, data: TareaFormData): Promise<Tarea> =>
-  apiFetch("PUT", `/tareas/${id}`, data)
-export const deleteTarea = (id: number): Promise<void> =>
-  apiFetch("DELETE", `/tareas/${id}`)
+export const createTarea = async (
+  tarea: TareaFormData
+): Promise<Tarea> => {
+  const { data, error } = await supabase
+    .from("tareas")
+    .insert([tarea])
+    .select()
+    .single();
 
-// Apuntes
-export const getApuntes = (): Promise<Apunte[]> => apiFetch("GET", "/apuntes")
-export const getApunte = (id: number): Promise<Apunte> => apiFetch("GET", `/apuntes/${id}`)
-export const createApunte = (data: ApunteFormData): Promise<Apunte> =>
-  apiFetch("POST", "/apuntes", data)
-export const updateApunte = (id: number, data: ApunteFormData): Promise<Apunte> =>
-  apiFetch("PUT", `/apuntes/${id}`, data)
-export const deleteApunte = (id: number): Promise<void> =>
-  apiFetch("DELETE", `/apuntes/${id}`)
+  if (error) throw error;
+
+  return data as Tarea;
+};
+
+export const updateTarea = async (
+  id: number,
+  tarea: TareaFormData
+): Promise<Tarea> => {
+  const { data, error } = await supabase
+    .from("tareas")
+    .update(tarea)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data as Tarea;
+};
+
+export const deleteTarea = async (
+  id: number
+): Promise<void> => {
+  const { error } = await supabase
+    .from("tareas")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+};
+
+// APUNTES
+
+export const getApuntes = async (): Promise<Apunte[]> => {
+  const { data, error } = await supabase
+    .from("apuntes")
+    .select("*")
+    .order("id");
+
+  if (error) throw error;
+
+  return data as Apunte[];
+};
+
+export const getApunte = async (
+  id: number
+): Promise<Apunte> => {
+  const { data, error } = await supabase
+    .from("apuntes")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) throw error;
+
+  return data as Apunte;
+};
+
+export const createApunte = async (
+  apunte: ApunteFormData
+): Promise<Apunte> => {
+  const { data, error } = await supabase
+    .from("apuntes")
+    .insert([apunte])
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data as Apunte;
+};
+
+export const updateApunte = async (
+  id: number,
+  apunte: ApunteFormData
+): Promise<Apunte> => {
+  const { data, error } = await supabase
+    .from("apuntes")
+    .update(apunte)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data as Apunte;
+};
+
+export const deleteApunte = async (
+  id: number
+): Promise<void> => {
+  const { error } = await supabase
+    .from("apuntes")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+};
