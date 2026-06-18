@@ -22,7 +22,7 @@ export function TareaForm({ title, saveLabel, defaultValues, onSave }: Props) {
   const fechaInicial = parseFechaLimite(defaultValues?.fechaLimite ?? null)
 
   const [titulo, setTitulo] = useState(defaultValues?.titulo ?? "")
-  const [descripcion, setDescripcion] = useState(defaultValues?.descripcion ?? "")
+  const [descripción, setDescripción] = useState(defaultValues?.descripción ?? "")
   const [materia, setMateria] = useState(defaultValues?.materia ?? "")
   const [fechaDia, setFechaDia] = useState(fechaInicial.dia)
   const [fechaMes, setFechaMes] = useState(fechaInicial.mes)
@@ -30,9 +30,7 @@ export function TareaForm({ title, saveLabel, defaultValues, onSave }: Props) {
   const [prioridad, setPrioridad] = useState<TareaFormData["prioridad"]>(
     defaultValues?.prioridad ?? "media"
   )
-  const [estado, setEstado] = useState<TareaFormData["estado"]>(
-    defaultValues?.estado ?? "pendiente"
-  )
+  const [estado, setEstado] = useState(defaultValues?.estado ?? false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -51,7 +49,7 @@ export function TareaForm({ title, saveLabel, defaultValues, onSave }: Props) {
     try {
       await onSave({
         titulo,
-        descripcion,
+        descripción,
         materia,
         fechaLimite: buildFechaLimite(fechaDiaNormalizada, fechaMes, fechaAnio),
         prioridad,
@@ -105,8 +103,8 @@ export function TareaForm({ title, saveLabel, defaultValues, onSave }: Props) {
           </label>
           <textarea
             id="task-desc"
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
+            value={descripción}
+            onChange={(e) => setDescripción(e.target.value)}
             rows={4}
             className="w-full rounded-field border border-ep-card-border bg-white px-5 py-4 font-sans text-2xl font-normal text-foreground focus:outline-none focus:ring-2 focus:ring-ep-cta"
           />
@@ -268,20 +266,24 @@ export function TareaForm({ title, saveLabel, defaultValues, onSave }: Props) {
 
         <div className="flex flex-wrap items-center gap-6">
           <span className="font-sans text-2xl">Estado:</span>
-          {(["pendiente", "completada"] as const).map((e) => (
-            <label key={e} className="flex cursor-pointer items-center gap-2 font-sans text-xl capitalize">
+          {(
+            [
+              { label: "Pendiente", value: false },
+              { label: "Completada", value: true },
+            ] as const
+          ).map(({ label, value }) => (
+            <label key={label} className="flex cursor-pointer items-center gap-2 font-sans text-xl">
               <input
                 type="radio"
                 name="estado"
-                value={e}
-                checked={estado === e}
-                onChange={() => setEstado(e)}
+                checked={estado === value}
+                onChange={() => setEstado(value)}
                 className="peer sr-only"
               />
               <span className="flex size-4 items-center justify-center rounded border-2 border-foreground bg-[#2c2c2c] peer-checked:[&>svg]:opacity-100">
                 <Check className="size-3 text-white opacity-0" />
               </span>
-              {e.charAt(0).toUpperCase() + e.slice(1)}
+              {label}
             </label>
           ))}
         </div>

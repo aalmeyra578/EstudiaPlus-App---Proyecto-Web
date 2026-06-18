@@ -87,6 +87,7 @@ src/
 ├── services/
 │   └── api.ts
 ├── lib/
+│   ├── supabase.ts
 │   ├── date.ts
 │   ├── materia.ts
 │   └── utils.ts
@@ -94,18 +95,19 @@ src/
     └── entities.ts
 ```
 
-## API
+## Datos (Supabase)
 
-La app consume una API REST con base configurable:
+La app persiste tareas y apuntes en Supabase. El cliente se inicializa en `src/lib/supabase.ts`; las páginas consumen `src/services/api.ts`, que expone las mismas funciones (`getTareas`, `createApunte`, etc.) independientemente del backend.
 
-- `VITE_API_URL` (default: `http://localhost:3000`)
+Variables de entorno (`.env`):
 
-Endpoints utilizados:
+- `VITE_SUPABASE_URL` — URL del proyecto Supabase
+- `VITE_SUPABASE_ANON_KEY` — clave pública anónima
 
-- `GET/POST /tareas`
-- `GET/PUT/DELETE /tareas/:id`
-- `GET/POST /apuntes`
-- `GET/PUT/DELETE /apuntes/:id`
+Tablas utilizadas:
+
+- `Tabla tareas` — CRUD completo desde la app
+- `Apuntes` — CRUD completo desde la app
 
 ## Stack
 
@@ -113,6 +115,7 @@ Endpoints utilizados:
 - Vite 8
 - TypeScript
 - Tailwind CSS 3
+- Supabase (`@supabase/supabase-js`)
 - Radix UI (`@radix-ui/react-checkbox`, `@radix-ui/react-select`)
 - Lucide React
 
@@ -131,6 +134,7 @@ Requisitos: Node.js LTS (v20 o v22) y npm.
 
 ```bash
 npm install
+# Configurar .env con VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY
 npm run dev
 ```
 
