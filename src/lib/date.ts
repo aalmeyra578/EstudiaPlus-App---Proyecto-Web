@@ -54,3 +54,24 @@ export function getDaysInMonth(mes: string, anioStr: string): number {
   const y = parseInt(anioStr, 10) || new Date().getFullYear()
   return new Date(y, idx + 1, 0).getDate()
 }
+
+/** Calendar day key matching CalendarioPage (`year-month-day`, 1-based month). */
+export function toCalendarDayKey(iso: string): string | null {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return null
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+}
+
+/** Groups items with fechaLimite by calendar day key; skips entries without a valid date. */
+export function groupByCalendarDay<T extends { fechaLimite: string | null }>(
+  items: T[]
+): Record<string, T[]> {
+  const map: Record<string, T[]> = {}
+  for (const item of items) {
+    if (!item.fechaLimite) continue
+    const key = toCalendarDayKey(item.fechaLimite)
+    if (!key) continue
+    ;(map[key] ??= []).push(item)
+  }
+  return map
+}
