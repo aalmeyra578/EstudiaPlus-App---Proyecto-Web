@@ -32,17 +32,17 @@ export function TareasPage() {
 
   const filtered = tareas.filter((t) => {
     const matchSearch = t.titulo.toLowerCase().includes(search.toLowerCase())
-    if (filter === "pendientes") return t.estado === "pendiente" && matchSearch
-    if (filter === "completadas") return t.estado === "completada" && matchSearch
+    if (filter === "pendientes") return !t.estado && matchSearch
+    if (filter === "completadas") return t.estado && matchSearch
     return matchSearch
   })
 
   async function toggleTarea(tarea: Tarea) {
-    const nuevoEstado = tarea.estado === "completada" ? "pendiente" : "completada"
+    const nuevoEstado = !tarea.estado
     try {
       const updated = await updateTarea(tarea.id, {
         titulo: tarea.titulo,
-        descripcion: tarea.descripcion,
+        descripción: tarea.descripción,
         materia: tarea.materia,
         fechaLimite: tarea.fechaLimite,
         prioridad: tarea.prioridad,
@@ -87,14 +87,11 @@ export function TareasPage() {
 
           <TaskFilterTabs activeTab={filter} onChange={setFilter} />
 
-          {filtered.map((tarea) => {
-            const completada = tarea.estado === "completada"
-
-            return (
+          {filtered.map((tarea) => (
               <ListItemCard key={tarea.id} className="py-0">
                 <TaskCompletionControl
                   title={tarea.titulo}
-                  completed={completada}
+                  completed={tarea.estado}
                   onToggle={() => toggleTarea(tarea)}
                 />
 
@@ -108,8 +105,7 @@ export function TareasPage() {
                   deleteAriaLabel="Eliminar tarea"
                 />
               </ListItemCard>
-            )
-          })}
+          ))}
         </ListSection>
 
         <div className="mt-auto">

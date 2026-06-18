@@ -1,11 +1,11 @@
 export type Tarea = {
   id: number
   titulo: string
-  descripcion: string
+  descripción: string
   materia: string
   fechaLimite: string | null
   prioridad: "baja" | "media" | "alta"
-  estado: "pendiente" | "completada"
+  estado: boolean
 }
 
 export type TareaFormData = Omit<Tarea, "id">
