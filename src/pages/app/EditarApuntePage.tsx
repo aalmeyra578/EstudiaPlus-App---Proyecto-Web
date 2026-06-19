@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 
 import { ApunteForm } from "@/components/app/ApunteForm"
 import { StatusMessage } from "@/components/app/StatusMessage"
-import { getApunte, updateApunte } from "@/services/apunte.service"
+import { getApunte, updateApunte } from "@/services/apuntes.service"
 import type { Apunte, ApunteFormData } from "@/types/entities"
 
 export function EditarApuntePage() {
