@@ -11,7 +11,7 @@ import { SectionContainer } from "@/components/app/SectionContainer"
 import { TaskCompletionControl } from "@/components/app/TaskCompletionControl"
 import { TaskFilterTabs, type TaskFilterTab } from "@/components/app/TaskFilterTabs"
 
-import { deleteTarea as deleteTareaApi, getTareas, updateTarea } from "@/services/api"
+import { deleteTarea as deleteTareaApi, getTareas, updateTarea } from "@/services/tareas.service"
 import type { Tarea } from "@/types/entities"
 
 export function TareasPage() {
