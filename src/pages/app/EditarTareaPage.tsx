@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 
 import { TareaForm } from "@/components/app/TareaForm"
 import { StatusMessage } from "@/components/app/StatusMessage"
-import { getTarea, updateTarea } from "@/services/api"
+import { getTarea, updateTarea } from "@/services/tareas.service"
 import type { Tarea, TareaFormData } from "@/types/entities"
 
 export function EditarTareaPage() {
