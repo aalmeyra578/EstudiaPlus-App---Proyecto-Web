@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 
 import { ApunteForm } from "@/components/app/ApunteForm"
-import { createApunte } from "@/services/api"
+import { createApunte } from "@/services/apuntes.service"
 import type { ApunteFormData } from "@/types/entities"
 
 export function NuevoApuntePage() {
