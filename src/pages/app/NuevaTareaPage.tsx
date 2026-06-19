@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 
 import { TareaForm } from "@/components/app/TareaForm"
-import { createTarea } from "@/services/api"
+import { createTarea } from "@/services/tareas.service"
 import type { TareaFormData } from "@/types/entities"
 
 export function NuevaTareaPage() {
