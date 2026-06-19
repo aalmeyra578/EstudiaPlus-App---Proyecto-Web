@@ -1,13 +1,8 @@
-import type { PostgrestError } from "@supabase/supabase-js";
-
 import { supabase } from "@/lib/supabase";
+import { TABLES, throwIfError } from "./tables";
 import type { Apunte, ApunteFormData } from "@/types/entities";
 
-function throwIfError(error: PostgrestError | null): void {
-  if (error) throw error;
-}
-
-const TABLE_NAME = "Apuntes";
+const TABLE_NAME = TABLES.apuntes;
 
 // Apuntes
 
