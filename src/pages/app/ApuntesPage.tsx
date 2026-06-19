@@ -9,7 +9,7 @@ import { MateriaBadge } from "@/components/app/MateriaBadge"
 import { PageSearchTopbar } from "@/components/app/PageSearchTopbar"
 import { SectionContainer } from "@/components/app/SectionContainer"
 import { StatusMessage } from "@/components/app/StatusMessage"
-import { deleteApunte as deleteApunteApi, getApuntes } from "@/services/api"
+import { deleteApunte as deleteApunteApi, getApuntes } from "@/services/apuntes.service"
 import type { Apunte } from "@/types/entities"
 
 export function ApuntesPage() {
