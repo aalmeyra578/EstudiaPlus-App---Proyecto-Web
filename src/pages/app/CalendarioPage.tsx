@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { StatusMessage } from "@/components/app/StatusMessage"
 import { groupByCalendarDay } from "@/lib/date"
 import { getMateriaColor } from "@/lib/materia"
-import { getTareas } from "@/services/api"
+import { getTareas } from "@/services/tareas.service"
 import type { Tarea } from "@/types/entities"
 
 const WEEKDAYS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]
